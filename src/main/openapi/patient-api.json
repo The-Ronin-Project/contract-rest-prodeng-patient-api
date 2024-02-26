@@ -60,7 +60,7 @@
               "type": "string"
             },
             "required": true,
-            "description": "The UDP ID of the patient to which the questionnaire is assigned",
+            "description": "The UDP ID of the patient for which to fetch questionnaires",
             "example": "ronin-PatientFHIRID10"
           }
         ],
@@ -121,24 +121,6 @@
                 "examples": {
                   "ForbiddenExample": {
                     "$ref": "#/components/examples/ForbiddenException"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Error"
-                      }
-                    }
                   }
                 }
               }
@@ -211,7 +193,7 @@
           },
           "icon_url": {
             "type": "string",
-            "description": "URL for provider image"
+            "description": "Provider image URL"
           }
         },
         "required": [
