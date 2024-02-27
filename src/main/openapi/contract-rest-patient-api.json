@@ -1,0 +1,356 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Patient REST API - OpenAPI 3.0",
+    "description": "REST API contract for the Patient API. \n\nSome useful links:\n- [Patient API Repository](https://github.com/projectronin/prodeng-patient-api)",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "prod-eng-one@projectronin.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Task",
+      "description": "Endpoints used for operations on task related data"
+    }
+  ],
+  "paths": {
+    "/tenants/{tenantId}/patients/{patientId}/questionnaire-tasks": {
+      "get": {
+        "tags": [
+          "Task"
+        ],
+        "summary": "Fetch questionnaire tasks",
+        "description": "Fetch active tasks with related questionnaire and provider data for a patient",
+        "operationId": "fetchQuestionnaireTasks",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "tenantId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The ID of the tenant used as context for the questionnaire task search",
+            "example": "ronin"
+          },
+          {
+            "in": "path",
+            "name": "patientId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The UDP ID of the patient for which to fetch questionnaire tasks",
+            "example": "ronin-PatientFHIRID10"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FetchQuestionnaireTasksResponseBody"
+                },
+                "examples": {
+                  "FetchQuestionnaires": {
+                    "$ref": "#/components/examples/FetchQuestionnaireTasksResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "BadRequestExample": {
+                    "$ref": "#/components/examples/BadRequestException"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "ForbiddenExample": {
+                    "$ref": "#/components/examples/ForbiddenException"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FetchQuestionnaireTasksResponseBody": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionnaireTask"
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
+      "QuestionnaireTask": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "$ref": "#/components/schemas/Task"
+          },
+          "questionnaire": {
+            "$ref": "#/components/schemas/Questionnaire"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/Provider"
+          }
+        },
+        "required": [
+          "task",
+          "questionnaire",
+          "provider"
+        ]
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "UUID generated by Task Service"
+          },
+          "assignerId": {
+            "type": "string",
+            "description": "ID of the clinician to initiate the questionnaire for the patient"
+          },
+          "schedule": {
+            "type": "string",
+            "description": "Indication of how often the questionnaire should be completed"
+          },
+          "isComplete": {
+            "type": "boolean",
+            "description": "If the patient has completed the questionnaire for the time period"
+          }
+        },
+        "required": [
+          "id",
+          "assignerId",
+          "schedule",
+          "isComplete"
+        ]
+      },
+      "Questionnaire": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "UUID generated by Questionnaire Service"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the questionnaire intended for the patient"
+          },
+          "name": {
+            "type": "string",
+            "description": "Patient facing name for the questionnaire"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "name"
+        ]
+      },
+      "Provider": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Provider FHIR ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Provider name"
+          },
+          "iconUrl": {
+            "type": "string",
+            "description": "Provider image URL"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "iconUrl"
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for this error"
+          },
+          "source": {
+            "type": "string",
+            "description": "Service where the error originated"
+          },
+          "httpStatus": {
+            "type": "string",
+            "enum": [
+              "NOT_FOUND",
+              "FORBIDDEN",
+              "BAD_REQUEST"
+            ],
+            "description": "String representation of HTTP status"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "description": "HTTP status"
+          },
+          "error": {
+            "type": "string",
+            "description": "Human readable form of the exception or httpStatus. This MUST be included"
+          },
+          "exception": {
+            "type": "string",
+            "description": "The exception class"
+          },
+          "message": {
+            "type": "string",
+            "description": "Human readable message"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human readable message that describes the specific failure"
+          }
+        }
+      }
+    },
+    "examples": {
+      "FetchQuestionnaireTasksResponse": {
+        "summary": "Successful fetch",
+        "value": {
+          "data": [
+            {
+              "task": {
+                "id": "472d10f1-0587-4004-a69d-376339c4a1db",
+                "assignerId": "ProviderFHIRID1",
+                "schedule": "Weekly",
+                "isComplete": false
+              },
+              "questionnaire": {
+                "id": "d78f8706-6e68-49b0-a57c-4a0f3aedb128",
+                "version": "1.0",
+                "name": "Breast Cancer Symptoms Questionnaire"
+              },
+              "provider": {
+                "id": "ProviderFHIRID1",
+                "name": "Joan Smith",
+                "iconUrl": "https://ronin.io/assets/joan-smith-icon.png"
+              }
+            }
+          ]
+        }
+      },
+      "BadRequestException": {
+        "summary": "Bad Request",
+        "value": {
+          "errors": [
+            {
+              "id": "7cee23ea-95f6-11ee-b9d1-0242ac120002",
+              "source": "patient-api",
+              "httpStatus": "BAD_REQUEST",
+              "timestamp": "2024-10-11T06:53:17.45Z",
+              "status": 400,
+              "error": "Bad request",
+              "exception": "com.projectronin.product.common.exception.BadRequestException",
+              "message": "Invalid params",
+              "detail": "Must include the \"patientId\" param"
+            }
+          ]
+        }
+      },
+      "ForbiddenException": {
+        "summary": "Forbidden",
+        "value": {
+          "errors": [
+            {
+              "id": "81c92e14-95f6-11ee-b9d1-0242ac120002",
+              "source": "patient-api",
+              "httpStatus": "FORBIDDEN",
+              "timestamp": "2024-10-11T06:53:17.45Z",
+              "status": 403,
+              "error": "Forbidden",
+              "exception": "com.projectronin.produce.common.exception.ForbiddenException",
+              "message": "Forbidden",
+              "detail": "No"
+            }
+          ]
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

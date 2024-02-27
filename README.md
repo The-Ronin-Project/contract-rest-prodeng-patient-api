@@ -1,6 +1,6 @@
-# Template Project for REST Contracts
+# Patient API (aka Strangler)
 
-This repo contains an example of a REST contract repository, to be used as a template repository in GitHub.
+This repo contains the REST contract for interacting with Patient API.
 
 # Tools
 
@@ -22,10 +22,6 @@ The project looks like this:
 ```
 
 Change the `rootProject.name` value in [settings.gradle.kts](settings.gradle.kts) to reflect what you want your deployed artifact ID to be.
-
-Replace [ronin-contract-rest-template.json](src/main/openapi/ronin-contract-rest-template.json) with your OpenAPI spec.  You may break up using references to other local files so long as they are
-contained inside the `src/main/openapi` directory, but you should put them in sub-folders (e.g. `src/main/openapi/schemas/<schema-name>.json`).  Ignore the `info/version` value of your spec, as it
-will be replaced during the build process.
 
 The plugin outputs five artifacts:
 - a tar.gz file that contains the compiled schemas
