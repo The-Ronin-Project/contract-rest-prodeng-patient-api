@@ -1,4 +1,4 @@
-rootProject.name = "patient-api"
+rootProject.name = "contract-rest-patient-api"
 
 pluginManagement {
     repositories {
